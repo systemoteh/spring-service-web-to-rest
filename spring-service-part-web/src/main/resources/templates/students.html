@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>All students</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+            integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+            crossorigin="anonymous"></script>
+</head>
+<body>
+<main role="main" class="container">
+    <div class="row justify-content-center pt-3">
+        <h2>All students</h2>
+    </div>
+    <nav class="navbar navbar-light bg-light justify-content-between">
+        <form action="#" th:action="@{/students/edit}" method="post" class="navbar-brand">
+            <input type="submit" value="Add new Student" class="btn btn-success"/>
+        </form>
+        <form action="#" th:action="@{/students/search}" method="get" class="form-inline">
+            <input type="search" th:value="${query}" id="query" name="query" aria-label="Search"
+                   placeholder="Search" class="form-control mr-sm-2">
+            <button type="submit" class="btn btn-outline-success my-2 my-sm-0">Search</button>
+        </form>
+        <form action="#" th:action="@{/logout}" method="post" class="navbar-brand">
+            <input type="submit" value="Logout" class="btn btn-primary"/>
+        </form>
+    </nav>
+    <table class="table table-hover">
+        <caption>Total count:
+<!--            <span th:utext="${students.size()}"></span>-->
+        </caption>
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">First name</th>
+            <th scope="col">Middle name</th>
+            <th scope="col">Last name</th>
+            <th scope="col">Birth date</th>
+            <th scope="col">E-mail</th>
+            <th scope="col">Edit</th>
+            <th scope="col">Delete</th>
+        </tr>
+        </thead>
+        <tbody>
+        <th:block th:each="student : ${students}">
+            <tr>
+                <td th:text="${student.id}"></td>
+                <td th:text="${student.firstName}"></td>
+                <td th:text="${student.middleName}"></td>
+                <td th:text="${student.lastName}"></td>
+                <td th:text="${#dates.format(student.birthDate, 'yyyy-MM-dd')}"></td>
+                <td th:text="${student.email}"></td>
+                <td>
+                    <form action="#" method="post" th:action="@{/students/edit}" th:object="${student}">
+                        <!--thymeleaf post form in loop (with object)-->
+                        <input type="hidden" th:value="*{id}" id="id" name="id"/>
+                        <input type="hidden" th:value="*{firstName}" id="firstName" name="firstName"/>
+                        <input type="hidden" th:value="*{middleName}" id="middleName" name="middleName"/>
+                        <input type="hidden" th:value="*{lastName}" id="lastName" name="lastName"/>
+                        <input type="hidden" th:value="*{birthDate}" id="birthDate" name="birthDate"/>
+                        <input type="hidden" th:value="*{email}" id="email" name="email"/>
+                        <input type="submit" class="btn btn-warning" value="Edit"/>
+                    </form>
+                <td>
+                    <form action="#" th:action="@{'/students/delete/'+ ${student.id}}" method="post">
+                        <input type="submit" value="Delete" class="btn btn-danger"/>
+                    </form>
+                </td>
+            </tr>
+        </th:block>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>
