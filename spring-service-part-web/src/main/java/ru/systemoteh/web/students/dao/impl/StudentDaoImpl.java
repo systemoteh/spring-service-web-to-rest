@@ -20,6 +20,8 @@ public class StudentDaoImpl implements StudentDao {
     private String restHost;
     @Value("${rest.students}")
     private String restStudents;
+    @Value("${rest.search}")
+    private String restSearch;
     @Resource(name = "userBean")
     UserBean userBean;
     private static final String HEADER_AUTH = "Authorization";
@@ -49,11 +51,24 @@ public class StudentDaoImpl implements StudentDao {
                 .exchange(restHost + restStudents, HttpMethod.POST, request, Student.class);
 
         boolean isSuccessful = response.getStatusCode().is2xxSuccessful();
+        if (!isSuccessful) {
+            // todo: throw Exception and catch it on error page
+        }
     }
 
     @Override
     public List<Student> findByQuery(String query) {
-        return null;
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HEADER_AUTH, getToken());
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("query", query);
+        HttpEntity request = new HttpEntity(headers);
+        ResponseEntity<Student[]> response = restTemplate
+                .exchange(restHost + restStudents + restSearch + query,
+                        HttpMethod.GET, request, Student[].class);
+
+        return Arrays.asList(response.getBody());
     }
 
     @Override

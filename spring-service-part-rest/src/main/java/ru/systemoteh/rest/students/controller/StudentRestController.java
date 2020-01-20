@@ -34,9 +34,7 @@ public class StudentRestController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         List<Student> students = studentService.findByQuery(query);
-        if (students.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+
         return new ResponseEntity<>(students, HttpStatus.OK);
     }
 
