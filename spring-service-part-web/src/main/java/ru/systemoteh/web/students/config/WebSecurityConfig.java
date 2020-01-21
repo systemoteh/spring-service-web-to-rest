@@ -28,7 +28,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers(USER_ADMIN_ENDPOINTS).hasAnyAuthority(USER_ADMIN_ROLE)
-                .antMatchers(ADMIN_ENDPOINTS).hasAuthority(ADMIN_ROLE)
+                // управление доступом на уровне ролей реализовано в rest части (по token)
+//                .antMatchers(ADMIN_ENDPOINTS).hasAuthority(ADMIN_ROLE)
                 .antMatchers(ANONYMOUS_ENDPOINTS).permitAll()
                 .anyRequest().authenticated()
 

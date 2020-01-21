@@ -6,7 +6,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
-import ru.systemoteh.web.students.bean.UserBean;
+import ru.systemoteh.web.students.bean.SessionToken;
 import ru.systemoteh.web.students.dao.UserDao;
 import ru.systemoteh.web.students.domain.User;
 
@@ -19,8 +19,8 @@ public class UserDaoImpl implements UserDao {
     private String restHost;
     @Value("${rest.login}")
     private String restLogin;
-    @Resource(name = "userBean")
-    UserBean userBean;
+    @Resource(name = "sessionToken")
+    SessionToken sessionToken;
 
     @Override
     public User findByUsername(String username) {
@@ -29,7 +29,7 @@ public class UserDaoImpl implements UserDao {
         ResponseEntity<User> response = restTemplate
                 .exchange(restHost + restLogin, HttpMethod.POST, request, User.class);
         User user = response.getBody();
-        userBean.setUser(user);
+        sessionToken.setToken(user.getToken());
         return user;
     }
 }

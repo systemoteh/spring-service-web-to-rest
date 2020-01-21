@@ -3,8 +3,9 @@ package ru.systemoteh.web.students.dao.impl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-import ru.systemoteh.web.students.bean.UserBean;
+import ru.systemoteh.web.students.bean.SessionToken;
 import ru.systemoteh.web.students.dao.StudentDao;
 import ru.systemoteh.web.students.domain.Student;
 
@@ -22,8 +23,12 @@ public class StudentDaoImpl implements StudentDao {
     private String restStudents;
     @Value("${rest.search}")
     private String restSearch;
-    @Resource(name = "userBean")
-    UserBean userBean;
+    @Value("${rest.delete}")
+    private String restDelete;
+
+    @Resource(name = "sessionToken")
+    SessionToken sessionToken;
+
     private static final String HEADER_AUTH = "Authorization";
     private static final String TOKEN_PREFIX = "Bearer ";
 
@@ -47,12 +52,12 @@ public class StudentDaoImpl implements StudentDao {
         headers.set(HEADER_AUTH, getToken());
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<Student> request = new HttpEntity<>(student, headers);
-        ResponseEntity<Student> response = restTemplate
-                .exchange(restHost + restStudents, HttpMethod.POST, request, Student.class);
-
-        boolean isSuccessful = response.getStatusCode().is2xxSuccessful();
-        if (!isSuccessful) {
-            // todo: throw Exception and catch it on error page
+        try {
+            restTemplate.exchange(restHost + restStudents, HttpMethod.POST, request, Student.class);
+        } catch (HttpClientErrorException e) {
+            if (HttpStatus.FORBIDDEN == e.getStatusCode()) {
+                // todo: throw Exception and catch it on error page
+            }
         }
     }
 
@@ -62,7 +67,6 @@ public class StudentDaoImpl implements StudentDao {
         HttpHeaders headers = new HttpHeaders();
         headers.set(HEADER_AUTH, getToken());
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("query", query);
         HttpEntity request = new HttpEntity(headers);
         ResponseEntity<Student[]> response = restTemplate
                 .exchange(restHost + restStudents + restSearch + query,
@@ -73,7 +77,18 @@ public class StudentDaoImpl implements StudentDao {
 
     @Override
     public void deleteById(Long id) {
-
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HEADER_AUTH, getToken());
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<Student> request = new HttpEntity<>(headers);
+        try {
+            restTemplate.exchange(restHost + restStudents + restDelete + id, HttpMethod.DELETE, request, Student.class);
+        } catch (HttpClientErrorException e) {
+            if (HttpStatus.FORBIDDEN == e.getStatusCode()) {
+                // todo: throw Exception and catch it on error page
+            }
+        }
     }
 
     @Override
@@ -83,6 +98,6 @@ public class StudentDaoImpl implements StudentDao {
     }
 
     private String getToken() {
-        return TOKEN_PREFIX + userBean.getUser().getToken();
+        return TOKEN_PREFIX + sessionToken.getToken();
     }
 }
