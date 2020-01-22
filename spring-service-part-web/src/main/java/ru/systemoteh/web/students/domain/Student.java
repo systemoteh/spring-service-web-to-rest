@@ -4,9 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.util.Date;
 
 @Data
 @ToString
@@ -17,7 +14,6 @@ public class Student {
     private String firstName;
     private String middleName;
     private String lastName;
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date birthDate;
+    private String birthDate;
     private String email;
 }

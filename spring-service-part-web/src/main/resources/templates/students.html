@@ -51,7 +51,7 @@
                 <td th:text="${student.firstName}"></td>
                 <td th:text="${student.middleName}"></td>
                 <td th:text="${student.lastName}"></td>
-                <td th:text="${#dates.format(student.birthDate, 'yyyy-MM-dd')}"></td>
+                <td th:text="${student.birthDate}"></td>
                 <td th:text="${student.email}"></td>
                 <td>
                     <form action="#" method="post" th:action="@{/students/edit}" th:object="${student}">
